@@ -1,7 +1,9 @@
 <template>
-  <div id="app">
-    <reference-book />
-  </div>
+  <v-app>
+    <v-main>
+      <reference-book />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -17,5 +19,3 @@ export default {
 };
 
 </script>
-
-<style lang="scss"/>

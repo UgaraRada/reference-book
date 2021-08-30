@@ -49,12 +49,8 @@
       "no-param-reassign": "off",
       "vue/require-default-prop": "off",
       "vue/no-v-html": "off",
-      "max-len": [
-        "error",
-        {
-          "code": 120
-        }
-      ]
+      "linebreak-style": "off",
+      "max-len": "off"
     }
   },
   "browserslist": [
