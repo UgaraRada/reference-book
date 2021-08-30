@@ -30,17 +30,17 @@
       </v-btn>
     </div>
     <v-card
-      v-for="(it, index) in vendorsName"
-      :key="index"
+      v-for="(it, key) in objectsByRegionCode"
+      :key="key"
       class="pa-4 mt-4"
     >
       <v-list-item-content class="card">
         <v-list-item-title class="card__title">
-          {{ it.name }}
+          {{ key }}
         </v-list-item-title>
         <v-list-item-subtitle class="card__text">
           <span>Количество активных объектов: {{ it.active }}</span>
-          <span>Количество отключенных объектов: {{ it.disable }}</span>
+          <span>Количество отключенных объектов: {{ it.disabled }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
     </v-card>
@@ -54,13 +54,10 @@ export default {
 
   data() {
     return {
-      name: '',
       branch: {},
       region: {},
-      vendors: {},
-      vendorsName: [],
-      setVendors: new Set(),
       branchesAndRegions: [],
+      objectsByRegionCode: {},
     };
   },
 
@@ -69,25 +66,25 @@ export default {
   },
 
   methods: {
-    showVendors(num) {
-      this.vendorsName = [];
-      const vendorsSet = new Set();
-      this.vendors = this.getObjectsByRegionCode(num)[num];
-      this.vendors.forEach((it) => vendorsSet.add(it.vendor));
-      vendorsSet.forEach((it) => this.vendorsName.push({ name: it }));
-      this.statusRecord();
-    },
-    statusRecord() {
-      this.vendorsName.forEach((it) => { it.active = this.numActive(it.name); });
-      this.vendorsName.forEach((it) => { it.disable = this.numDisable(it.name); });
-    },
-    numActive(name) {
-      return this.vendors.filter((it) => it.vendor === name)
-        .filter((it) => it.status === 'ACTIVE').length;
-    },
-    numDisable(name) {
-      return this.vendors.filter((it) => it.vendor === name)
-        .filter((it) => it.status === 'DISABLE').length;
+    showVendors(code) {
+      this.objectsByRegionCode = this.getObjectsByRegionCode(code)[code].reduce((acc, it) => {
+        if (!acc[it.vendor]) {
+          acc[it.vendor] = {
+            disabled: 0,
+            active: 0,
+          };
+        }
+
+        if (it.status === 'DISABLE') {
+          acc[it.vendor].disabled += 1;
+        }
+
+        if (it.status === 'ACTIVE') {
+          acc[it.vendor].active += 1;
+        }
+
+        return acc;
+      }, {});
     },
     getBranchesAndRegions() {
       const data = {
